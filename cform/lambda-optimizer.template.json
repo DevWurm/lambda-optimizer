@@ -1,0 +1,238 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "StateMachine": {
+            "Type": "AWS::StepFunctions::StateMachine",
+            "Properties": {
+                "DefinitionString": {
+                    "Fn::Sub": null
+                },
+                "RoleArn": {
+                    "Fn::GetAtt": [
+                        "StatesExecutionRole",
+                        "Arn"
+                    ]
+                }
+            }
+        },
+        "AverageDuration": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-average-duration.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-average-duration.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "DecrementRepetitions": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-decrement-repetitions.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-decrement-repetitions.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "LambdaExecutor": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-lambda-executor.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-lambda-executor.zip",
+                "Runtime": "nodejs6.10",
+                "Timeout": 300
+            }
+        },
+        "MultiplyWithPrice": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-multiply-with-price.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-multiply-with-price.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "SumDuration": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-sum-duration.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-sum-duration.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "Initialize": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-initialize.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-initialize.zip",
+                "Runtime": "nodejs6.10",
+                "Timeout": 300
+            }
+        },
+        "Cleanup": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-cleanup.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-cleanup.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "FilterResult": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-filter-result.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-filter-result.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "SortResults": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "dist/lambda-optimizer-sort-results.handler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Code": "dist/lambda-optimizer-sort-results.zip",
+                "Runtime": "nodejs6.10"
+            }
+        },
+        "LambdaExecutionRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "lambda-optimizer-lambda-execution-policy",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents",
+                                        "logs:FilterLogEvents",
+                                        "logs:GetLogEvents"
+                                    ],
+                                    "Resource": "arn:aws:logs:*:*:*"
+                                },
+                                {
+                                    "Action": [
+                                        "lambda:InvokeFunction",
+                                        "lambda:DeleteFunction",
+                                        "lambda:UpdateFunctionConfiguration",
+                                        "lambda:PublishVersion"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "arn:aws:lambda:*:*:*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "StatesExecutionRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": {
+                                    "Fn::Sub": "states.${AWS::Region}.amazonaws.com"
+                                }
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "lambda-optimizer-states-execution-policy",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Action": [
+                                        "lambda:InvokeFunction"
+                                    ],
+                                    "Effect": "Allow",
+                                    "Resource": "arn:aws:lambda:*:*:lambda-optimizer-*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
