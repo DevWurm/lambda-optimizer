@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es6",
+      "lib": [
+        "ES6",
+        "ES2016.Array.Include"
+      ],
+      "sourceMap": true,
+      "outDir": "./dist",
+      "alwaysStrict": true,
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "pretty": true,
+      "strictNullChecks": true
+    },
+    "include": [
+      "src/**/*.ts"
+    ]
+}
