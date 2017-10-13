@@ -4,7 +4,7 @@ const {writeFileSync} = require('fs');
 module.exports = function(grunt) {
     const sourceTemplatePath = grunt.option('src-cf') || resolve(__dirname, 'cform', 'lambda-optimizer.template.json');
     const templateOutPath = grunt.option('out-cf') || resolve(__dirname, 'lambda-optimizer.json');
-    const priceClasses = require(grunt.option('price-classes') || resolve(__dirname, 'src', 'price-classes.json'));
+    const priceClasses = require(grunt.option('price-classes') ? resolve(__dirname, grunt.option('price-classes')) : resolve(__dirname, 'price-classes', 'price-classes.full.json'));
 
     const nodeBin = bin => resolve(
         __dirname,
