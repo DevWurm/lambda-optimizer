@@ -16,11 +16,11 @@ export async function handler(event: any, context: any, callback: Function) {
         );
         
         for (const priceClass of classes) {
-            const version = (await lambda.publishVersion({FunctionName: referenceLambda}).promise()).Version as string;
-
             await lambda.updateFunctionConfiguration({
                 FunctionName: referenceLambda, MemorySize: priceClass.memory
             }).promise()
+
+            const version = (await lambda.publishVersion({FunctionName: referenceLambda}).promise()).Version as string;
 
             newState[`config${priceClass.memory}`] = {
                 qualifier: version,
