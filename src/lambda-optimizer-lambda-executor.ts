@@ -10,7 +10,7 @@ export function handler(event: any, context: any, callback: Function) {
             FunctionName: event.function,
             Qualifier: qualifier,
             LogType: 'Tail',
-            Payload: JSON.stringify(event.payload),
+            Payload: event.payload || JSON.stringify({}),
         });
 
         request.on('complete', (response) => {
