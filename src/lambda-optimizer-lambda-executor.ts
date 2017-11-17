@@ -3,6 +3,7 @@ import { Lambda } from 'aws-sdk';
 export function handler(event: any, context: any, callback: Function) {
     try {
         const qualifier = event[`config${event.memory}`].qualifier
+        console.log(qualifier)
 
         const lambda = new Lambda();
 

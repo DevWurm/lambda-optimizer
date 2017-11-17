@@ -15,31 +15,31 @@
                 }
             }
         },
-        "AverageDuration": {
+        "AnalyzeResults": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-                "Handler": "dist/lambda-optimizer-average-duration.handler",
+                "Handler": "dist/lambda-optimizer-analyze-results.handler",
                 "Role": {
                     "Fn::GetAtt": [
                         "LambdaExecutionRole",
                         "Arn"
                     ]
                 },
-                "Code": "dist/lambda-optimizer-average-duration.zip",
+                "Code": "dist/lambda-optimizer-analyze-results.zip",
                 "Runtime": "nodejs6.10"
             }
         },
-        "DecrementRepetitions": {
+        "PostExecution": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-                "Handler": "dist/lambda-optimizer-decrement-repetitions.handler",
+                "Handler": "dist/lambda-optimizer-post-execution.handler",
                 "Role": {
                     "Fn::GetAtt": [
                         "LambdaExecutionRole",
                         "Arn"
                     ]
                 },
-                "Code": "dist/lambda-optimizer-decrement-repetitions.zip",
+                "Code": "dist/lambda-optimizer-post-execution.zip",
                 "Runtime": "nodejs6.10"
             }
         },
@@ -56,34 +56,6 @@
                 "Code": "dist/lambda-optimizer-lambda-executor.zip",
                 "Runtime": "nodejs6.10",
                 "Timeout": 300
-            }
-        },
-        "MultiplyWithPrice": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-                "Handler": "dist/lambda-optimizer-multiply-with-price.handler",
-                "Role": {
-                    "Fn::GetAtt": [
-                        "LambdaExecutionRole",
-                        "Arn"
-                    ]
-                },
-                "Code": "dist/lambda-optimizer-multiply-with-price.zip",
-                "Runtime": "nodejs6.10"
-            }
-        },
-        "SumDuration": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-                "Handler": "dist/lambda-optimizer-sum-duration.handler",
-                "Role": {
-                    "Fn::GetAtt": [
-                        "LambdaExecutionRole",
-                        "Arn"
-                    ]
-                },
-                "Code": "dist/lambda-optimizer-sum-duration.zip",
-                "Runtime": "nodejs6.10"
             }
         },
         "Initialize": {
@@ -114,20 +86,6 @@
                 "Code": "dist/lambda-optimizer-cleanup.zip",
                 "Runtime": "nodejs6.10",
                 "Timeout": 300
-            }
-        },
-        "FilterResult": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-                "Handler": "dist/lambda-optimizer-filter-result.handler",
-                "Role": {
-                    "Fn::GetAtt": [
-                        "LambdaExecutionRole",
-                        "Arn"
-                    ]
-                },
-                "Code": "dist/lambda-optimizer-filter-result.zip",
-                "Runtime": "nodejs6.10"
             }
         },
         "SortResults": {

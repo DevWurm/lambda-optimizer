@@ -14,14 +14,11 @@ module.exports = function(grunt) {
     );
 
     const functions = [
-        'average-duration',
+        'analyze-results',
         'cleanup',
-        'decrement-repetitions',
         'initialize',
         'lambda-executor',
-        'multiply-with-price',
-        'sum-duration',
-        'filter-result',
+        'post-execution',
         'sort-results',
     ].map(n => `lambda-optimizer-${n}`);
 

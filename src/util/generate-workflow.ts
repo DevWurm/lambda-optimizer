@@ -17,47 +17,45 @@ export function generateWorkflow(classes: PriceClass[]): object {
             "Next": `Execution${priceClass.memory}`
           }
         ],
-        "Default": `Average${priceClass.memory}`
+        "Default": `Cleanup${priceClass.memory}`
       },
       [`Execution${priceClass.memory}`]: {
         "Type": "Task",
         "Resource": "${LambdaExecutor.Arn}",
         "ResultPath": "$.lastDuration",
-        "Next": `SumUp${priceClass.memory}`
+        "TimeoutSeconds": 299,
+        "Catch": [ {
+           "ErrorEquals": ["States.Timeout"],
+           "ResultPath": "$.error-info",
+           "Next": `TimedOutCleanup${priceClass.memory}`
+        }],
+        "Next": `PostExecution${priceClass.memory}`
       },
-      [`SumUp${priceClass.memory}`]: {
+      [`PostExecution${priceClass.memory}`]: {
         "Type": "Task",
-        "Resource": "${SumDuration.Arn}",
-        "ResultPath": "$.duration",
-        "Next": `DecrementRepetions${priceClass.memory}`
-      },
-      [`DecrementRepetions${priceClass.memory}`]: {
-        "Type": "Task",
-        "Resource": "${DecrementRepetitions.Arn}",
-        "ResultPath": "$.repetitions",
+        "Resource": "${PostExecution.Arn}",
         "Next": `ExecutionChoice${priceClass.memory}`
-      },
-      [`Average${priceClass.memory}`]: {
-        "Type": "Task",
-        "Resource": "${AverageDuration.Arn}",
-        "ResultPath": "$.duration",
-        "Next": `Price${priceClass.memory}`
-      },
-      [`Price${priceClass.memory}`]: {
-        "Type": "Task",
-        "Resource": "${MultiplyWithPrice.Arn}",
-        "ResultPath": "$.result",
-        "Next": `Cleanup${priceClass.memory}`,
       },
       [`Cleanup${priceClass.memory}`]: {
         "Type": "Task",
         "Resource": "${Cleanup.Arn}",
         "ResultPath": `$.cleanupResult`,
-        "Next": `FilterResult${priceClass.memory}`,
+        "Next": `AnalyzeResults${priceClass.memory}`,
       },
-      [`FilterResult${priceClass.memory}`]: {
+      [`AnalyzeResults${priceClass.memory}`]: {
         "Type": "Task",
-        "Resource": "${FilterResult.Arn}",
+        "Resource": "${AnalyzeResults.Arn}",
+        "End": true,
+      },
+      [`TimedOutCleanup${priceClass.memory}`]: {
+        "Type": "Task",
+        "Resource": "${Cleanup.Arn}",
+        "ResultPath": `$.cleanupResult`,
+        "Next": `TimedOut${priceClass.memory}`,
+      },
+      [`TimedOut${priceClass.memory}`]: {
+        "Type": "Pass",
+        "Result": {timeout: true},
         "End": true,
       },
     }
