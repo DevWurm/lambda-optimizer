@@ -112,7 +112,8 @@
                     ]
                 },
                 "Code": "dist/lambda-optimizer-cleanup.zip",
-                "Runtime": "nodejs6.10"
+                "Runtime": "nodejs6.10",
+                "Timeout": 300
             }
         },
         "FilterResult": {
